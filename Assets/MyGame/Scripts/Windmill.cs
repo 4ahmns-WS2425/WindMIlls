@@ -12,6 +12,7 @@ public class Windmill : MonoBehaviour
     [SerializeField] private Light lampLight;
     [SerializeField] private Slider speedSlider;
     [SerializeField] private TMP_Text lockedText;
+    
 
     [SerializeField] public bool isWindmillSelected = false;
     private const float MAX_LIGHT_INTENSITY = 1f; // Maximum lamp brightness
@@ -33,7 +34,6 @@ public class Windmill : MonoBehaviour
         UpdateUI();
         UpdateLightIntensity();
 
-        // Nur steuern, wenn Windmühle ausgewählt und nicht gesperrt
         if (isWindmillSelected)
         {
             rotor.RotateRotor(true);
@@ -43,7 +43,14 @@ public class Windmill : MonoBehaviour
             rotor.RotateRotor(false);
         }
     }
-
+    public void ShowHideWindmill()
+    {
+        WindmillShowHide manager = FindObjectOfType<WindmillShowHide>();
+        if (manager != null)
+        {
+            manager.ShowOnly(this); 
+        }
+    }
 
     public void ToggleRotationMode()
     {
