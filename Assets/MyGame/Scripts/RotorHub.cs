@@ -7,7 +7,7 @@ public class RotorHub : MonoBehaviour
 
     [SerializeField] private float acceleration = 50f; // Speed increase per second
     [SerializeField] private float deceleration = 30f; // Speed decrease per second
-    
+
     public float currentSpeed = 0f; // Current rotation speed
     public float constRotationSpeed = -1f;
 
@@ -18,25 +18,23 @@ public class RotorHub : MonoBehaviour
         {
             if (constRotationSpeed != -1)
             {
-                // Rotate the rotor hub
-                transform.Rotate(Vector3.forward * currentSpeed * Time.deltaTime);
+                transform.Rotate(Vector3.forward * constRotationSpeed * Time.deltaTime);
             }
-
             return;
         }
 
+        
         RotateAtDynamicSpeed(Input.GetKey(KeyCode.Space));
-
-        // Rotate the rotor hub
         transform.Rotate(Vector3.forward * currentSpeed * Time.deltaTime);
     }
+
 
     public int GetCurrentSpeed()
     {
         return (int)Mathf.Clamp(currentSpeed, 0f, MAX_ROTATION_SPEED);
     }
 
-    //Call in Update
+
     public void RotateAtDynamicSpeed(bool isKeyPressed)
     {
         // Holding Space increases rotation speed

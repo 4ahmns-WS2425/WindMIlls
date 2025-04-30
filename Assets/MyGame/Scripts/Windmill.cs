@@ -1,16 +1,19 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using UnityEngine.EventSystems;
 
 public class Windmill : MonoBehaviour
 {
     private enum WindmillColors { RED, GREEN, BLUE };
 
     [SerializeField] private WindmillColors color;
-    [SerializeField] private RotorHub rotor;
-    [SerializeField] private Light lampLight; 
+    [SerializeField] public RotorHub rotor;
+    [SerializeField] private Light lampLight;
     [SerializeField] private Slider speedSlider;
+    [SerializeField] private TMP_Text lockedText;
 
-    [SerializeField] private bool isWindmillSelected = false;
+    [SerializeField] public bool isWindmillSelected = false;
     private const float MAX_LIGHT_INTENSITY = 1f; // Maximum lamp brightness
 
     private void Start()
@@ -29,7 +32,16 @@ public class Windmill : MonoBehaviour
     {
         UpdateUI();
         UpdateLightIntensity();
-        rotor.RotateRotor(isWindmillSelected);
+
+        // Nur steuern, wenn Windmühle ausgewählt und nicht gesperrt
+        if (isWindmillSelected)
+        {
+            rotor.RotateRotor(true);
+        }
+        else if (IsWindmillLocked())
+        {
+            rotor.RotateRotor(false);
+        }
     }
 
 
@@ -54,7 +66,6 @@ public class Windmill : MonoBehaviour
 
     private void UpdateLightIntensity()
     {
-        // Control light intensity based on speed
         if (lampLight != null)
         {
             lampLight.intensity = Mathf.Lerp(0f, MAX_LIGHT_INTENSITY, speedSlider.value / 255f);
@@ -108,4 +119,25 @@ public class Windmill : MonoBehaviour
             speedSlider.value = Mathf.Round(rotor.currentSpeed);
         }
     }
+
+    public void ToggleLockStatus()
+    {
+        if (isWindmillSelected == true)
+        {
+            lockedText.text = "Unlock";
+        }
+        else
+        {
+            lockedText.text = "Lock";
+        }
+        EventSystem.current.SetSelectedGameObject(null);
+        WindmillManager manager = FindObjectOfType<WindmillManager>();
+        if (manager != null)
+        {
+            manager.LockAllExcept(this);
+        }
+    }
+
+
+
 }

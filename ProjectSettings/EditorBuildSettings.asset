@@ -4,5 +4,14 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/MyGame/Scenes/Menu_ColorPicker_Scene.unity
+    guid: 6a4c29606f2b90141b61d83f72722ae2
+  - enabled: 1
+    path: Assets/MyGame/Scenes/WindmillsRGB.unity
+    guid: 1c3a8c0455a1c9844b86404fb1f0d1a6
+  - enabled: 1
+    path: Assets/MyGame/Scenes/EndScene.unity
+    guid: f3981776c554c134a8299d519d90ef5d
   m_configObjects: {}
