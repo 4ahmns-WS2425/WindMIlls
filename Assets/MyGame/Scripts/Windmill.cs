@@ -7,6 +7,7 @@ public class Windmill : MonoBehaviour
 {
     private enum WindmillColors { RED, GREEN, BLUE };
 
+   
     [SerializeField] private WindmillColors color;
     [SerializeField] public RotorHub rotor;
     [SerializeField] private Light lampLight;
@@ -16,6 +17,7 @@ public class Windmill : MonoBehaviour
 
     [SerializeField] public bool isWindmillSelected = false;
     private const float MAX_LIGHT_INTENSITY = 1f; // Maximum lamp brightness
+    
 
     private void Start()
     {
@@ -25,10 +27,11 @@ public class Windmill : MonoBehaviour
             return;
         }
 
+        
         ToggleLamp();
         SetLampColor(color);
+        
     }
-
     private void Update()
     {
         UpdateUI();
@@ -41,14 +44,20 @@ public class Windmill : MonoBehaviour
         else if (IsWindmillLocked())
         {
             rotor.RotateRotor(false);
+
+            ShowHideWindmill(false);
         }
     }
-    public void ShowHideWindmill()
+    public void ShowHideWindmill(bool hide)
     {
         WindmillShowHide manager = FindObjectOfType<WindmillShowHide>();
-        if (manager != null)
+        if (manager != null && hide)
         {
             manager.ShowOnly(this); 
+        }
+        if (manager != null && !hide)
+        {
+            manager.ShowAll();
         }
     }
 
@@ -102,6 +111,7 @@ public class Windmill : MonoBehaviour
         if (!lampLight.isActiveAndEnabled)
         {
             lampLight.enabled = true;
+            ShowHideWindmill(true);
         }
     }
 
