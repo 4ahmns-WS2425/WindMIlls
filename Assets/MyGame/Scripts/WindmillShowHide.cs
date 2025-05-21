@@ -10,21 +10,22 @@ public class WindmillShowHide : MonoBehaviour
 
     public void ShowOnly(Windmill selected)
     {
-        
         foreach (var windmill in allWindmills)
         {
-            bool isSelected = windmill == selected;
-            windmill.gameObject.SetActive(isSelected);
-            
+            if (windmill == selected)
+            {
+                windmill.HighlightLamp(); // ausgewählte Windmühle farbig leuchten lassen
+            }
+            else
+            {
+                windmill.DimLamp(); // andere abdämpfen
+            }
         }
     }
 
     public void ShowAll()
     {
-        foreach (var windmill in allWindmills)
-        {
-            windmill.gameObject.SetActive(true);
-        }
+        
     }
 
 }

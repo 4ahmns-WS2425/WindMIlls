@@ -7,17 +7,20 @@ public class Windmill : MonoBehaviour
 {
     private enum WindmillColors { RED, GREEN, BLUE };
 
-   
     [SerializeField] private WindmillColors color;
     [SerializeField] public RotorHub rotor;
     [SerializeField] private Light lampLight;
     [SerializeField] private Slider speedSlider;
     [SerializeField] private TMP_Text lockedText;
-    
+    [SerializeField] private AudioSource windmillEngine;
 
     [SerializeField] public bool isWindmillSelected = false;
-    private const float MAX_LIGHT_INTENSITY = 1f; // Maximum lamp brightness
-    
+    private const float MAX_LIGHT_INTENSITY = 1f;
+
+    // Für pulsierende Animation
+    private Vector3 originalScale;
+    [SerializeField] private float pulseSpeed = 2f;
+    [SerializeField] private float pulseMagnitude = 0.05f;
 
     private void Start()
     {
@@ -27,11 +30,13 @@ public class Windmill : MonoBehaviour
             return;
         }
 
-        
+        originalScale = transform.localScale;
+
         ToggleLamp();
         SetLampColor(color);
         
     }
+
     private void Update()
     {
         UpdateUI();
@@ -40,24 +45,27 @@ public class Windmill : MonoBehaviour
         if (isWindmillSelected)
         {
             rotor.RotateRotor(true);
+            AnimatePulse();
         }
-        else if (IsWindmillLocked())
+        else
         {
             rotor.RotateRotor(false);
 
-            ShowHideWindmill(false);
+            if (IsWindmillLocked())
+            {
+                ShowHideWindmill(false);
+            }
+
+            ResetScale();
         }
     }
+
     public void ShowHideWindmill(bool hide)
     {
         WindmillShowHide manager = FindObjectOfType<WindmillShowHide>();
         if (manager != null && hide)
         {
-            manager.ShowOnly(this); 
-        }
-        if (manager != null && !hide)
-        {
-            manager.ShowAll();
+            manager.ShowOnly(this);
         }
     }
 
@@ -122,6 +130,7 @@ public class Windmill : MonoBehaviour
         rotor.currentSpeed = 0;
         speedSlider.value = 0;
         ToggleLamp();
+        ResetScale();
     }
 
     public bool IsWindmillLocked()
@@ -139,14 +148,7 @@ public class Windmill : MonoBehaviour
 
     public void ToggleLockStatus()
     {
-        if (isWindmillSelected == true)
-        {
-            lockedText.text = "Unlock";
-        }
-        else
-        {
-            lockedText.text = "Lock";
-        }
+        lockedText.text = isWindmillSelected ? "Unlock" : "Lock";
         EventSystem.current.SetSelectedGameObject(null);
         WindmillManager manager = FindObjectOfType<WindmillManager>();
         if (manager != null)
@@ -155,6 +157,28 @@ public class Windmill : MonoBehaviour
         }
     }
 
+    public void HighlightLamp()
+    {
+        lampLight.enabled = true;
+        SetLampColor(color);
+        lampLight.intensity = 1f;
+    }
 
+    public void DimLamp()
+    {
+        lampLight.enabled = true;
+        lampLight.color = Color.gray;
+        lampLight.intensity = 0.2f;
+    }
 
+    private void AnimatePulse()
+    {
+        float scaleFactor = 1 + Mathf.Sin(Time.time * pulseSpeed) * pulseMagnitude;
+        transform.localScale = originalScale * scaleFactor;
+    }
+
+    private void ResetScale()
+    {
+        transform.localScale = originalScale;
+    }
 }
