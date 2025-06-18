@@ -7,7 +7,7 @@ using TMPro;
 public class EndingScript : MonoBehaviour
 {
     public WindmillManager wma;
-    public ColorGoalScript cgsa;
+    public GameManagerScript cgsa;
     [SerializeField] GameObject goalSphere;
     [SerializeField] GameObject achievedSphere;
     [SerializeField] TMP_Text procentageText;
@@ -16,9 +16,9 @@ public class EndingScript : MonoBehaviour
     void Start()
     {
         wma = FindObjectOfType<WindmillManager>();
-        cgsa = FindObjectOfType<ColorGoalScript>();
-        float similarity = GetColorSimilarityPercentage(cgsa._goalColor, wma.windmillColor);
-        goalSphere.GetComponent<Renderer>().material.color = cgsa._goalColor;
+        cgsa = FindObjectOfType<GameManagerScript>();
+        float similarity = GetColorSimilarityPercentage(cgsa._goalColour, wma.windmillColor);
+        goalSphere.GetComponent<Renderer>().material.color = cgsa._goalColour;
         achievedSphere.GetComponent<Renderer>().material.color = wma.windmillColor;
         procentageText.text = similarity + "%";
     }

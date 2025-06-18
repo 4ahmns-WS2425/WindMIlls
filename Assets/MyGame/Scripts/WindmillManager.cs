@@ -10,7 +10,7 @@ public class WindmillManager : MonoBehaviour
     [SerializeField] Button reset;
     [SerializeField] GameObject endGameButton;
 
-    private ColorGoalScript _cgsa;
+    private GameManagerScript _cgsa;
     public Color32 windmillColor = new Color32(0, 0, 0, 255);
 
     private Windmill currentSelectedWindmill;
@@ -18,8 +18,8 @@ public class WindmillManager : MonoBehaviour
 
     private void Start()
     {
-        _cgsa = GameObject.FindObjectOfType<ColorGoalScript>();
-        _wallGoal.GetComponent<Renderer>().material.color = _cgsa._goalColor;
+        _cgsa = GameObject.FindObjectOfType<GameManagerScript>();
+        _wallGoal.GetComponent<Renderer>().material.color = _cgsa._goalColour;
 
         if (windmills.Length == 0 || wall == null)
         {
