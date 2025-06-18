@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.ParticleSystemJobs;
 
 public class GameManagerScript : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class GameManagerScript : MonoBehaviour
     public Color _goalColour;
     public Color[] _colorsArray;
 
+    
     void Start()
     {
         foreach (GameObject obj in objectsWithScripts)

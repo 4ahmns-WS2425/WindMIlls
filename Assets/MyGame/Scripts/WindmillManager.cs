@@ -16,6 +16,11 @@ public class WindmillManager : MonoBehaviour
     private Windmill currentSelectedWindmill;
     private bool allWindmillsLocked = false;
 
+    [Header("ParticleSystems")]
+    public ParticleSystem particlesTop;
+
+
+
     private void Start()
     {
         _cgsa = GameObject.FindObjectOfType<GameManagerScript>();
@@ -56,9 +61,10 @@ public class WindmillManager : MonoBehaviour
     private void UpdateWallColor()
     {
         CombineLightSpeed();
-
+        
         if (wall != null)
         {
+            particlesTop.startColor = windmillColor;
             wall.GetComponent<Renderer>().material.color = windmillColor;
         }
     }
