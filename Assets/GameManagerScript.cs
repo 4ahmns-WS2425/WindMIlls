@@ -76,6 +76,10 @@ public class GameManagerScript : MonoBehaviour
 
     void Start()
     {
+        if (Display.displays.Length > 1)
+        {
+            Display.displays[1].Activate(); // Display 2 aktivieren
+        }
         var emission = wma.particlesTop.emission;
         wma = GameObject.FindObjectOfType<WindmillManager>();
         emission.enabled = false;
