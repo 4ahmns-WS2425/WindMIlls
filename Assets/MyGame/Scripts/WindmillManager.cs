@@ -5,10 +5,8 @@ using UnityEngine.SceneManagement;
 public class WindmillManager : MonoBehaviour
 {
     [SerializeField] Windmill[] windmills;
-    [SerializeField] GameObject wall;
     [SerializeField] GameObject _wallGoal;
-    [SerializeField] Button reset;
-    [SerializeField] GameObject endGameButton;
+
 
     private GameManagerScript _cgsa;
     public Color32 windmillColor = new Color32(0, 0, 0, 255);
@@ -18,33 +16,48 @@ public class WindmillManager : MonoBehaviour
 
     [Header("ParticleSystems")]
     public ParticleSystem particlesTop;
+    public GameObject[] objectsToColor;
 
 
 
     private void Start()
     {
+        particlesTop.enableEmission = false;
         _cgsa = GameObject.FindObjectOfType<GameManagerScript>();
-        _wallGoal.GetComponent<Renderer>().material.color = _cgsa._goalColour;
 
-        if (windmills.Length == 0 || wall == null)
+
+        if (windmills.Length == 0)
         {
             Debug.LogError("WindmillManager: Keine Windmühlen oder Farbwand zugewiesen!");
             return;
         }
 
-        reset.gameObject.SetActive(false);
         currentSelectedWindmill = windmills[0];
         currentSelectedWindmill.SelectWindmill();
 
-        DontDestroyOnLoad(gameObject);
+
     }
 
     private void Update()
     {
         UpdateWallColor();
         CheckIfAllLocked();
+        UpdateColors();
     }
 
+    void UpdateColors()
+    {
+        foreach (GameObject obj in objectsToColor)
+        {
+            if (obj == null) continue;
+
+            Renderer rend = obj.GetComponent<Renderer>();
+            if (rend != null && rend.material.HasProperty("_Color"))
+            {
+                rend.material.color = windmillColor;
+            }
+        }
+    }
     public void ResetScene()
     {
         windmillColor = new Color32(0, 0, 0, 255);
@@ -61,12 +74,8 @@ public class WindmillManager : MonoBehaviour
     private void UpdateWallColor()
     {
         CombineLightSpeed();
-        
-        if (wall != null)
-        {
-            particlesTop.startColor = windmillColor;
-            wall.GetComponent<Renderer>().material.color = windmillColor;
-        }
+        particlesTop.startColor = windmillColor;
+
     }
 
     private void CombineLightSpeed()
@@ -124,8 +133,7 @@ public class WindmillManager : MonoBehaviour
         if (allLocked)
         {
             allWindmillsLocked = true;
-            reset.gameObject.SetActive(true);
-            endGameButton.SetActive(true);
+
         }
     }
     public void LoadEndScene()

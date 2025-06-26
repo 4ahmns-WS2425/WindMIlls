@@ -18,14 +18,16 @@ public class RotorHub : MonoBehaviour
         {
             if (constRotationSpeed != -1)
             {
-                transform.Rotate(Vector3.forward * constRotationSpeed * Time.deltaTime);
+                transform.Rotate(Vector3.forward, constRotationSpeed * Time.deltaTime, Space.World);
+
             }
             return;
         }
 
         
         RotateAtDynamicSpeed(Input.GetKey(KeyCode.Space));
-        transform.Rotate(Vector3.forward * currentSpeed * Time.deltaTime);
+        transform.Rotate(Vector3.forward, currentSpeed * Time.deltaTime, Space.World);
+
     }
 
 

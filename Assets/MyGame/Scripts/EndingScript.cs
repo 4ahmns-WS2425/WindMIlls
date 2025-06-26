@@ -15,17 +15,12 @@ public class EndingScript : MonoBehaviour
 
     void Start()
     {
-        wma = FindObjectOfType<WindmillManager>();
-        cgsa = FindObjectOfType<GameManagerScript>();
-        float similarity = GetColorSimilarityPercentage(cgsa._goalColour, wma.windmillColor);
-        goalSphere.GetComponent<Renderer>().material.color = cgsa._goalColour;
-        achievedSphere.GetComponent<Renderer>().material.color = wma.windmillColor;
-        procentageText.text = similarity + "%";
+
     }
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Return))
+        if (Input.GetKey(KeyCode.UpArrow))
         {
             Destroy(GameObject.Find("GameManager"));
             Destroy(GameObject.Find("Manager"));
@@ -35,14 +30,20 @@ public class EndingScript : MonoBehaviour
 
     float GetColorSimilarityPercentage(Color a, Color b)
     {
+        wma = FindObjectOfType<WindmillManager>();
+        cgsa = FindObjectOfType<GameManagerScript>();
+        float similarity = GetColorSimilarityPercentage(cgsa._goalColour, wma.windmillColor);
+        goalSphere.GetComponent<Renderer>().material.color = cgsa._goalColour;
+        achievedSphere.GetComponent<Renderer>().material.color = wma.windmillColor;
+        procentageText.text = similarity + "%";
         float rDiff = a.r - b.r;
         float gDiff = a.g - b.g;
         float bDiff = a.b - b.b;
 
         float distance = Mathf.Sqrt(rDiff * rDiff + gDiff * gDiff + bDiff * bDiff);
-        float similarity = 1f - (distance / Mathf.Sqrt(3f));
+        float knappheit = 1f - (distance / Mathf.Sqrt(3f));
 
-        return Mathf.Clamp((float)System.Math.Round(similarity * 100f, 2), 0f, 100f);
+        return Mathf.Clamp((float)System.Math.Round(knappheit * 100f, 2), 0f, 100f);
 
     }
 }

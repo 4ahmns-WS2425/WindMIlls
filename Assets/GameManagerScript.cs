@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.ParticleSystemJobs;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManagerScript : MonoBehaviour
 {
@@ -23,6 +24,21 @@ public class GameManagerScript : MonoBehaviour
     public GameObject randomNameCanvas;
     public string randomName;
     public TMP_Text randomNameText;
+
+    public Animator ghostAnimator;
+    public WindmillManager wma;
+    public GameObject textCanvas;
+    AnimatorStateInfo stateInfo;
+    private bool hasShownText = false;
+    [SerializeField] GameObject goalSphere;
+    [SerializeField] GameObject achievedSphere;
+    public GameObject goalSphereParent;
+    public GameObject achievedSphereParent;
+    [SerializeField] TMP_Text procentageText;
+    public GameObject finishedGameCanvas;
+    bool alreadyPulled = false;
+
+
 
     // Liste der männlichen Adjektive
     private string[] adjektive = new string[]
@@ -60,6 +76,9 @@ public class GameManagerScript : MonoBehaviour
 
     void Start()
     {
+        var emission = wma.particlesTop.emission;
+        wma = GameObject.FindObjectOfType<WindmillManager>();
+        emission.enabled = false;
         foreach (GameObject obj in objectsWithScripts)
         {
             MonoBehaviour[] scripts = obj.GetComponents<MonoBehaviour>();
@@ -74,6 +93,7 @@ public class GameManagerScript : MonoBehaviour
         {
             ui.interactable = false;
         }
+
     }
 
     public void ActivateRandomName()
@@ -87,6 +107,8 @@ public class GameManagerScript : MonoBehaviour
 
     }
 
+
+
     public void ChooseRandomName()
     {
         randomName = adjektive[Random.Range(0, adjektive.Length)] + " " + tiere[Random.Range(0, tiere.Length)];
@@ -96,11 +118,13 @@ public class GameManagerScript : MonoBehaviour
     public void ActivateCoulorCanvas()
     {
         colourCanvas.SetActive(true);
-        
+
     }
 
     public void SelectColorGoal(int a)
     {
+        ghostAnimator.SetTrigger("TrigGhost");
+        wma.particlesTop.enableEmission = true;
         foreach (GameObject obj in objectsWithScripts)
         {
             MonoBehaviour[] scripts = obj.GetComponents<MonoBehaviour>();
@@ -123,7 +147,33 @@ public class GameManagerScript : MonoBehaviour
     }
     void Update()
     {
+        if (ghostAnimator != null)
+        {
+            stateInfo = ghostAnimator.GetCurrentAnimatorStateInfo(0);
+            if (!hasShownText && stateInfo.IsName("Anim2") && stateInfo.normalizedTime >= 1.0f)
+            {
+                textCanvas.SetActive(true);
+                StartCoroutine(TextWait());
+                hasShownText = true;
+            }
+        }
 
+        if (Input.GetKeyDown(KeyCode.UpArrow) && !alreadyPulled)
+        {
+            finishedGameCanvas.SetActive(true);
+            achievedSphereParent.SetActive(true);
+            goalSphereParent.SetActive(true);
+            alreadyPulled = true;
+
+            float similarity = GetColorSimilarityPercentage(_goalColour, wma.windmillColor);
+            goalSphere.GetComponent<Renderer>().material.color = _goalColour;
+            achievedSphere.GetComponent<Renderer>().material.color = wma.windmillColor;
+            procentageText.text = similarity + "%";
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow) && alreadyPulled)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
     }
 
     public IEnumerator WaitTime()
@@ -132,4 +182,24 @@ public class GameManagerScript : MonoBehaviour
         randomNameCanvas.SetActive(false);
         ActivateCoulorCanvas();
     }
+
+    public IEnumerator TextWait()
+    {
+        yield return new WaitForSeconds(15);
+        textCanvas.SetActive(false);
+    }
+
+    float GetColorSimilarityPercentage(Color a, Color b)
+    {
+        float rDiff = a.r - b.r;
+        float gDiff = a.g - b.g;
+        float bDiff = a.b - b.b;
+
+        float distance = Mathf.Sqrt(rDiff * rDiff + gDiff * gDiff + bDiff * bDiff);
+        float knappheit = 1f - (distance / Mathf.Sqrt(3f));
+
+        return Mathf.Clamp((float)System.Math.Round(knappheit * 100f, 2), 0f, 100f);
+
+    }
 }
+

@@ -46,6 +46,7 @@ public class Windmill : MonoBehaviour
         {
             rotor.RotateRotor(true);
             AnimatePulse();
+            windmillEngine.Play();
         }
         else
         {
